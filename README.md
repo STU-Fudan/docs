@@ -8,9 +8,19 @@ This repository is base on the `wordpress Twenty Fourteen theme`.
 
 ### Preview
 
+![1](demo-1.png)
+
+![2](demo-2.png)
+
 ### Usage
 
 Just copy the `docs` folder to `/wp-content/themes/` and enable the theme.
+
+### Info
+
+I modified `functions.php`, added `docs_dir_select.js` and `docs_dir_select.css`. All the other files are in the default theme.
+
+`Font awesome` and `jQuery` are also included.
 
 ### Author / License
 
