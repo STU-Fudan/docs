@@ -1,10 +1,6 @@
 # docs
 
-`docs` is based on any wordpress theme, I'll transform it to a plugin when finished.
-
-It provides **CMS / file tree system** to wordpress. So you can make wordpress a wiki system or something else.
-
-This repository is base on the `wordpress Twenty Fourteen theme`.
+`docs` is a wordpress plugin, it provides **CMS / file tree system** to wordpress. So you can make wordpress a wiki system or something else.
 
 ### Preview
 
@@ -14,13 +10,11 @@ This repository is base on the `wordpress Twenty Fourteen theme`.
 
 ### Usage
 
-Just copy the `docs` folder to `/wp-content/themes/` and enable the theme.
+Just copy the `docs` folder to `/wp-content/plugins/` and enable the plugin.
 
 ### Info
 
-I modified `functions.php`, added `docs_dir_select.js` and `docs_dir_select.css`. All the other files are in the default theme.
-
-`Font awesome` and `jQuery` are also included.
+`Font awesome` and `jQuery` are used.
 
 ### Author / License
 
