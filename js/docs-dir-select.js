@@ -11,6 +11,8 @@
         files: [],
         menus: []
     };
+    var mouse_x, mouse_y;
+    var drag_file = null, initalization = false, open_folder = null;
     dir_field.on("contextmenu", function(evt) {evt.preventDefault();});
 
     var draw_file_icon = function(file, no) {
@@ -20,7 +22,7 @@
                 icon = "-file-text-o";
                 break;
             case "folder":
-                icon = "-folder-open-o";
+                icon = "-folder-o";
                 break;
             case "page":
                 icon = "-file-o";
@@ -85,6 +87,32 @@
                     success: function(data){
                         files = $.parseJSON(data);
                         refresh_files_field();
+                    }
+                });
+            }
+        });
+        return false;
+    };
+
+    var move_file = function(id_a, id_b) {
+        $("#docs_file_loading_gif").css("opacity", "1");
+        $.ajax({
+            type: "GET",
+            url: "admin-ajax.php",
+            dataType: 'html',
+            data: ({ action: 'movefile', from: id_a, to: id_b }),
+            success: function(data){
+                console.log(data);
+                $.ajax({
+                    type: "GET",
+                    url: "admin-ajax.php",
+                    dataType: 'html',
+                    data: ({ action: 'queryposts', meta: file_dir}),
+                    success: function(data){
+                        files = $.parseJSON(data);
+                        drag_file = null;
+                        open_folder = null;
+                        setTimeout(refresh_files_field, 300);
                     }
                 });
             }
@@ -255,6 +283,56 @@
                         remove_file(file_to_delete.ID);
                     }
                     $("#right_menu").remove();
+                });
+            }
+        });
+        $(".docs_file_icon").mousedown(function(event) {
+            if(event.which != 1)
+                return false;
+            drag_file = $(this);
+            initalization = false;
+            mouse_x = event.pageX - $(this).position().left;
+            mouse_y = event.pageY - $(this).position().top;
+        }).mouseenter(function(event) {
+                if(drag_file != null && !drag_file.is($(this))) {
+                    if($(this).children(".docs_folder_label").length) {
+                        $(this).find(".fa").attr("class", "fa fa-folder-open-o fa-5x");
+                        open_folder = $(this);
+                    }
+                }
+            }).mouseleave(function(event) {
+                if(!drag_file.is($(this)))
+                    if($(this).children(".docs_folder_label").length) {
+                        $(this).find(".fa").attr("class", "fa fa-folder-o fa-5x");
+                        if(open_folder == $(this))
+                            open_folder = null;
+                    }
+            });
+        $(document).mouseup(function(event) {
+            if(drag_file != null) {
+                $(drag_file).css({
+                    "position": "inherit",
+                    "left": "inherit",
+                    "top": "inherit"
+                });
+                if(open_folder != null) {
+                    open_folder.find(".fa").attr("class", "fa fa-folder-o fa-5x");
+                    move_file(files[+drag_file.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID,
+                        files[+open_folder.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID
+                    );
+                }
+                drag_file = null;
+            }
+        });
+        $(document).mousemove(function() {
+            if(drag_file != null) {
+                if(!initalization) {
+                    initalization = true;
+                    drag_file.css("position", "absolute");
+                }
+                drag_file.css({
+                    "left": event.pageX - mouse_x,
+                    "top": event.pageY - mouse_y
                 });
             }
         });

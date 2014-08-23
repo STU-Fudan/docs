@@ -107,7 +107,7 @@ input.docs_file_select_checkbox {
 #right_menu {
   position: absolute;
   display: block;
-  width: 100px;
+  width: 150px;
   padding: 2px;
   background: #fff;
   box-shadow: 0 0 0 1px #999, 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -115,11 +115,12 @@ input.docs_file_select_checkbox {
 
 #right_menu li {
   margin: 0;
+  padding: 2px 1em;
 }
 
 #right_menu li:hover {
   cursor: default;
-  background: #999;
+  background: #666;
   color: #fff;
 }
 

@@ -24,6 +24,8 @@ add_action('wp_ajax_removefile', 'remove_file');
 add_action('wp_ajax_nopriv_removefile', 'remove_file');
 add_action('wp_ajax_removefolder', 'remove_folder');
 add_action('wp_ajax_nopriv_removefolder', 'remove_folder');
+add_action('wp_ajax_movefile', 'move_file');
+add_action('wp_ajax_nopriv_movefile', 'move_file');
 add_action('admin_menu', 'docs_files_admin_menu');
 
 function docs_files_admin_menu() {
@@ -176,6 +178,34 @@ function remove_all_files_under($folder_id) {
 function remove_folder() {
     $post_id = $_GET['folder_id'];
     die(remove_all_files_under($post_id));
+}
+
+function move_all_files_under($dir, $id) {
+    $title = get_the_title($id) . "/";
+    $args = array(
+            'meta_key' => 'dir',
+            'meta_value' => get_post_meta($id, "dir", true) . $title,
+            'posts_per_page' => -1,
+            'post_type' => array('post', 'page', 'folder')
+        );
+    $posts = get_posts($args);
+    foreach($posts as $post) {
+        if($post->post_type == "folder") {
+            move_all_files_under($dir . $title, $post->ID);
+        }
+        else update_post_meta($post->ID, "dir", $dir . $title);
+    }
+    update_post_meta($id, "dir", $dir);
+}
+
+function move_file() {
+    $id_a = $_GET["from"];
+    $id_b = $_GET["to"];
+    $dir = get_post_meta($id_b, "dir", true) . get_the_title($id_b) . "/";
+    if(get_post_type($id_a) == "post")
+        update_post_meta($id_a, "dir", $dir);
+    else
+        move_all_files_under($dir, $id_a);
 }
 
 ?>
