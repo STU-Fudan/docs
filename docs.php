@@ -120,6 +120,8 @@ function query_post() {
     $args = array(
         'meta_key' => 'dir',
         'meta_value' => $meta,
+        'order_by' => 'post-type',
+        'order' => 'ASC',
         'posts_per_page' => -1,
         'post_type' => array('post', 'page', 'folder')
     );

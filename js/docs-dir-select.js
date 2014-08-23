@@ -22,6 +22,9 @@
             case "folder":
                 icon = "-folder-open-o";
                 break;
+            case "page":
+                icon = "-file-o";
+                break;
             case "default":
                 icon = "-file";
         }
@@ -191,7 +194,10 @@
             $("#right_menu").remove();
             if (event.which == 3) {
                 event.stopPropagation();
-                dir_field.append("<ul id='right_menu'><li id='delete_btn' data-for='" + $(this).attr("for") + "'>Delete</li></ul>");
+                dir_field.append("<ul id='right_menu'>"
+                    + "<li id='view_btn' data-for='" + $(this).attr("for") + "'>Visit</li>"
+                    + "<li id='delete_btn' data-for='" + $(this).attr("for") + "'>Delete</li>"
+                    + "</ul>");
                 var x = event.clientX - dir_field.offset().left;
                 var y = event.clientY - dir_field.offset().top;
                 $("#right_menu").css({
@@ -200,6 +206,12 @@
                 });
                 $("#right_menu").mousedown(function(event) {
                     event.stopPropagation();
+                });
+                $("#view_btn").click(function() {
+                    var file_to_view = files[+ $(this).attr("data-for").split("-")[1]];
+                    var win = window.open(file_to_view.guid, '_blank');
+                    win.focus();
+                    $("#right_menu").remove();
                 });
                 $("#delete_btn").click(function() {
                     var file_to_delete = files[+ $(this).attr("data-for").split("-")[1]];
@@ -214,7 +226,10 @@
             $("#right_menu").remove();
             if (event.which == 3) {
                 event.stopPropagation();
-                dir_field.append("<ul id='right_menu'><li id='delete_btn' data-for='" + $(this).attr("for") + "'>Delete</li></ul>");
+                dir_field.append("<ul id='right_menu'>"
+                    + "<li id='view_btn' data-for='" + $(this).attr("for") + "'>Visit</li>"
+                    + "<li id='delete_btn' data-for='" + $(this).attr("for") + "'>Delete</li>"
+                    + "</ul>");
                 var x = event.clientX - dir_field.offset().left;
                 var y = event.clientY - dir_field.offset().top;
                 $("#right_menu").css({
@@ -223,6 +238,12 @@
                 });
                 $("#right_menu").mousedown(function(event) {
                     event.stopPropagation();
+                });
+                $("#view_btn").click(function() {
+                    var file_to_view = files[+ $(this).attr("data-for").split("-")[1]];
+                    var win = window.open(file_to_view.guid, '_blank');
+                    win.focus();
+                    $("#right_menu").remove();
                 });
                 $("#delete_btn").click(function() {
                     var file_to_delete = files[+ $(this).attr("data-for").split("-")[1]];
