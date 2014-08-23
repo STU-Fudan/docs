@@ -41,6 +41,7 @@ function finder_menu_function() {
     echo '<link rel="stylesheet" href="' . plugins_url() . '/docs/css/font-awesome.css"/>';
     echo '<link rel="stylesheet" href="' . plugins_url() . '/docs/css/docs-dir-select.css"/>';
     echo '<div id="docs_dir_field"></div>';
+    echo '<p>Preview:</p><div id="file_preview"></div>';
     echo '<script src="' . plugins_url() . '/docs/js/jquery.min.js"></script>';
     echo '<script src="' . plugins_url() . '/docs/js/docs-dir-select.js"></script>';
     echo '</div>';

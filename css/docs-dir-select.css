@@ -122,3 +122,13 @@ input.docs_file_select_checkbox {
   background: #999;
   color: #fff;
 }
+
+#file_preview {
+  display: block;
+  height: 300px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #FFF;
+  border: 1px solid #E5E5E5;
+  position: relative;
+}

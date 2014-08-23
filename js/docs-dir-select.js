@@ -222,7 +222,10 @@
                 });
             }
         });
-        $(".docs_file_label").mousedown(function(event) {
+        $(".docs_file_label").dblclick(function() {
+            var file_to_view = files[+ $(this).attr("for").split("-")[1]];
+            var win = window.open("post.php?post=" + file_to_view.ID + "&action=edit", '_blank');
+        }).mousedown(function(event) {
             $("#right_menu").remove();
             if (event.which == 3) {
                 event.stopPropagation();
@@ -255,6 +258,24 @@
                 });
             }
         });
+        if($("#file_preview"))
+            $(".docs_file_icon label").click(function() {
+                if($(".docs_file_select_checkbox:checked").length === 0 && !$("#" + $(this).attr("for")).is(":checked")) {
+                    $("#file_preview").html(files[+$(this).attr("for").split("-")[1]].post_content);
+                    return;
+                }
+                else if($(".docs_file_select_checkbox:checked").length === 2 && $("#" + $(this).attr("for")).is(":checked")) {
+                    var ids = $("input[type=checkbox]:checked");
+                    var file_id;
+                    if(+$(ids[0]).attr("id").split("-")[1] == +$(this).attr("for").split("-")[1])
+                        file_id = +$(ids[1]).attr("id").split("-")[1];
+                    else
+                        file_id = +$(ids[0]).attr("id").split("-")[1];
+                    $("#file_preview").html(files[file_id].post_content);
+                    return;
+                }
+                $("#file_preview").html("");
+            });
         return true;
     };
     dir_field.mousedown(function() {
