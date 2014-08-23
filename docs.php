@@ -20,6 +20,31 @@ add_action('wp_ajax_queryposts', 'query_post');
 add_action('wp_ajax_nopriv_queryposts', 'query_post');
 add_action('wp_ajax_addnewfolder', 'add_new_folder');
 add_action('wp_ajax_nopriv_addnewfolder', 'add_new_folder');
+add_action('wp_ajax_removefile', 'remove_file');
+add_action('wp_ajax_nopriv_removefile', 'remove_file');
+add_action('wp_ajax_removefolder', 'remove_folder');
+add_action('wp_ajax_nopriv_removefolder', 'remove_folder');
+add_action('admin_menu', 'docs_files_admin_menu');
+
+function docs_files_admin_menu() {
+    add_menu_page("Docs Finder", "Finder", "manage_options", "docs_finder", "finder_menu_function", "dashicons-media-default", 3 );
+}
+
+function finder_menu_function() {
+    if ( !current_user_can( 'manage_options' ) )  {
+        wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+    }
+    wp_nonce_field( basename( __FILE__ ), 'docs_post_class_nonce' );
+    echo '<div class="wrap">';
+    echo '<p>File System: ';
+    echo '<input class="widefat" type="text" name="docs_dir_select" id="docs_dir_select_input" value="/" size="30"/></p>';
+    echo '<link rel="stylesheet" href="' . plugins_url() . '/docs/css/font-awesome.css"/>';
+    echo '<link rel="stylesheet" href="' . plugins_url() . '/docs/css/docs-dir-select.css"/>';
+    echo '<div id="docs_dir_field"></div>';
+    echo '<script src="' . plugins_url() . '/docs/js/jquery.min.js"></script>';
+    echo '<script src="' . plugins_url() . '/docs/js/docs-dir-select.js"></script>';
+    echo '</div>';
+}
 
 function docs_add_folder_type() {
     $labels = array(
@@ -59,7 +84,7 @@ function docs_dir_select_form() {
         $edit_post_dir = "/";
         update_post_meta($edit_post_id, "dir", "/");
     }
-    echo $edit_post_dir;
+    echo 'File directory: ' . $edit_post_dir;
     echo '</p>';
     echo '<link rel="stylesheet" href="' . plugins_url() . '/docs/css/font-awesome.css"/>';
     echo '<link rel="stylesheet" href="' . plugins_url() . '/docs/css/docs-dir-select.css"/>';
@@ -120,6 +145,34 @@ function add_new_folder() {
     $new_id = wp_insert_post($the_folder);
     update_post_meta( $new_id, "dir", $base_dir );
     die("SUCC");
+}
+
+function remove_file() {
+    $post_id = $_GET['file_id'];
+    wp_delete_post($post_id);
+}
+
+function remove_all_files_under($folder_id) {
+    $dir = get_post_meta($folder_id, "dir", true) . get_the_title($folder_id) . "/";
+    $args = array(
+            'meta_key' => 'dir',
+            'meta_value' => $dir,
+            'posts_per_page' => -1,
+            'post_type' => array('post', 'page', 'folder')
+        );
+    $posts = get_posts($args);
+    foreach($posts as $post) {
+        if($post->post_type == "folder") {
+            remove_all_files_under($post->ID);
+        }
+        else wp_delete_post($post->ID);
+    }
+    wp_delete_post($folder_id);
+}
+
+function remove_folder() {
+    $post_id = $_GET['folder_id'];
+    die(remove_all_files_under($post_id));
 }
 
 ?>

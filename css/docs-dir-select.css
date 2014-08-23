@@ -1,4 +1,5 @@
 #docs_dir_field {
+  position: relative;
   border: 1px solid #E5E5E5;
   background: #FAFAFA;
   padding: 10px;
@@ -15,6 +16,12 @@
   height: 90px;
   margin: 0 10px;
   text-align: center;
+  opacity: 0;
+  -webkit-transition: opacity .3s ease;
+  -moz-transition: opacity .3s ease;
+  -ms-transition: opacity .3s ease;
+  -o-transition: opacity .3s ease;
+  transition: opacity .3s ease;
 }
 
 .docs_file_icon_pic {
@@ -51,10 +58,11 @@ input.docs_file_select_checkbox {
 }
 
 .docs_file_select_checkbox:checked ~ .docs_file_icon_inner {
-  background: #fff;
+  background: #ECECEC;
   border-radius: 5px;
   color: #000;
   border: 1px solid #A8A8A8;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.24);
 }
 
 .docs_file_select_label:active ~ .docs_file_icon_inner {
@@ -70,10 +78,47 @@ input.docs_file_select_checkbox {
   margin-top: -4px;
 }
 
+#docs_file_loading_gif {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  background-image: url(./../images/preloader.gif);
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-transition: opacity .3s ease;
+  -moz-transition: opacity .3s ease;
+  -ms-transition: opacity .3s ease;
+  -o-transition: opacity .3s ease;
+  transition: opacity .3s ease;
+}
+
 #docs_new_folder_input {
   padding: 0;
   text-align: center;
   border: 0;
   height: 18px;
   box-shadow: 0 0 0 1px #DDD;
+}
+
+#right_menu {
+  position: absolute;
+  display: block;
+  width: 100px;
+  padding: 2px;
+  background: #fff;
+  box-shadow: 0 0 0 1px #999, 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#right_menu li {
+  margin: 0;
+}
+
+#right_menu li:hover {
+  cursor: default;
+  background: #999;
+  color: #fff;
 }
