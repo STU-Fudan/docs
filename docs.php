@@ -27,6 +27,7 @@ add_action('wp_ajax_nopriv_removefolder', 'remove_folder');
 add_action('wp_ajax_movefile', 'move_file');
 add_action('wp_ajax_nopriv_movefile', 'move_file');
 add_action('admin_menu', 'docs_files_admin_menu');
+add_action("template_redirect", 'docs_theme_redirect');
 
 function docs_files_admin_menu() {
     add_menu_page("Docs Finder", "Finder", "manage_options", "docs_finder", "finder_menu_function", "dashicons-media-default", 3 );
@@ -69,7 +70,7 @@ function docs_add_folder_type() {
     register_post_type( 'folder',
         array(
             'labels' => $labels,
-            'public' => false,
+            'public' => true,
             'supports' => $supports
         )
     );
@@ -118,11 +119,10 @@ function docs_save_post_class_meta($post_id, $post) {
     update_post_meta( $post_id, $meta_key, $new_meta_value );
 }
 
-function query_post() {
-    $meta = $_GET['meta'];
+function get_post_under_dir($dir) {
     $args = array(
         'meta_key' => 'dir',
-        'meta_value' => $meta,
+        'meta_value' => $dir,
         'order_by' => 'post-type',
         'order' => 'ASC',
         'posts_per_page' => -1,
@@ -131,7 +131,13 @@ function query_post() {
 
     $posts = get_posts($args);
 
-    $output = json_encode($posts);
+    return $posts;
+}
+
+function query_post() {
+    $meta = $_GET['meta'];
+    $output = get_post_under_dir($meta);
+    $output = json_encode($output);
 
     die($output);
 }
@@ -206,6 +212,37 @@ function move_file() {
         update_post_meta($id_a, "dir", $dir);
     else
         move_all_files_under($dir, $id_a);
+}
+
+function return_posts_list_html_under_dir($dir) {
+    $posts_list = get_post_under_dir($dir);
+    $output = "<ul>\n";
+    foreach($posts_list as $post) {
+        $output .= "<li>";
+        $output .= "<a class='posts_list_" . $post->post_type . "' href='";
+        $output .= $post->guid;
+        $output .= "'>" . $post->post_title . "</a>";
+        $output .= "</li>\n";
+    }
+    $output .= "</ul>\n";
+    return $output;
+}
+
+function docs_theme_redirect() {
+    global $wp;
+    $plugindir = dirname( __FILE__ );
+
+    if ($wp->query_vars["post_type"] == 'folder') {
+        $templatefilename = 'folder_template.php';
+        $return_template = $plugindir . '/' . $templatefilename;
+        global $post, $wp_query;
+        if (have_posts()) {
+            include($return_template);
+            die();
+        } else {
+            $wp_query->is_404 = true;
+        }
+    }
 }
 
 ?>

@@ -120,11 +120,15 @@
         return false;
     };
 
+    var move_to_parent = function(id) {
+
+    };
+
     var refresh_files_field = function() {
         dir_field.html("<div id='docs_file_loading_gif'></div>");
         if(file_dir != "/") {
-            dir_field.append(("<div class='docs_file_icon'><div class='docs_file_icon_inner'>"
-                + "<label id='docs_level_up' class='docs_file_select_label'></label>"
+            dir_field.append(("<div class='docs_file_icon'><label id='docs_level_up' class='docs_file_select_label'></label>"
+                + "<div class='docs_file_icon_inner'>"
                 + "<div class='docs_file_icon_pic'>"
                 + "<i class='fa fa-level-up fa-5x'></i></div><span class='docs_file_icon_title'>"
                 + "Parent Folder</span></div></div>"));
@@ -132,8 +136,8 @@
         for(var i = 0; i < files.length; ++i) {
             dir_field.append(draw_file_icon(files[i], i));
         }
-        dir_field.append(("<div class='docs_file_icon'><div class='docs_file_icon_inner'>"
-            + "<label id='docs_add_new_folder' class='docs_file_select_label'></label>"
+        dir_field.append(("<div class='docs_file_icon'><label id='docs_add_new_folder' class='docs_file_select_label'></label>"
+            + "<div class='docs_file_icon_inner'>"
             + "<div class='docs_file_icon_pic'>"
             + "<i class='fa fa-plus fa-5x'></i></div><span class='docs_file_icon_title'>"
             + "Add new folder</span></div></div>"));
@@ -287,6 +291,8 @@
             }
         });
         $(".docs_file_icon").mousedown(function(event) {
+            if(!$(this).children("input").length)
+                return false;
             if(event.which != 1)
                 return false;
             drag_file = $(this);
@@ -299,14 +305,17 @@
                         $(this).find(".fa").attr("class", "fa fa-folder-open-o fa-5x");
                         open_folder = $(this);
                     }
+                    else if($(this).children("#docs_level_up").length){
+                        open_folder = $(this);
+                    }
                 }
             }).mouseleave(function(event) {
-                if(!drag_file.is($(this)))
+                if(open_folder.is($(this))) {
                     if($(this).children(".docs_folder_label").length) {
                         $(this).find(".fa").attr("class", "fa fa-folder-o fa-5x");
-                        if(open_folder == $(this))
-                            open_folder = null;
                     }
+                    open_folder = null;
+                }
             });
         $(document).mouseup(function(event) {
             if(drag_file != null) {
@@ -316,10 +325,20 @@
                     "top": "inherit"
                 });
                 if(open_folder != null) {
-                    open_folder.find(".fa").attr("class", "fa fa-folder-o fa-5x");
-                    move_file(files[+drag_file.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID,
-                        files[+open_folder.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID
-                    );
+                    if(confirm("Are you sure to move "
+                        + files[+drag_file.children(".docs_file_select_checkbox").attr("id").split("-")[1]].post_title
+                        + " to " + files[+open_folder.children(".docs_file_select_checkbox").attr("id").split("-")[1]].post_title
+                        + "?")) {
+                        if (open_folder.children(".docs_folder_label").length) {
+                            open_folder.find(".fa").attr("class", "fa fa-folder-o fa-5x");
+                            move_file(files[+drag_file.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID,
+                                files[+open_folder.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID
+                            );
+                        }
+                        else {
+                            move_to_parent(files[+drag_file.children(".docs_file_select_checkbox").attr("id").split("-")[1]].ID);
+                        }
+                    }
                 }
                 drag_file = null;
             }
@@ -337,7 +356,7 @@
             }
         });
         if($("#file_preview"))
-            $(".docs_file_icon label").click(function() {
+            $(".docs_file_icon input ~ label").click(function() {
                 if($(".docs_file_select_checkbox:checked").length === 0 && !$("#" + $(this).attr("for")).is(":checked")) {
                     $("#file_preview").html(files[+$(this).attr("for").split("-")[1]].post_content);
                     return;

@@ -70,6 +70,11 @@ input.docs_file_select_checkbox {
   box-shadow: 0 3px 10px #999;
 }
 
+#docs_level_up:active ~ .docs_file_icon_inner, #docs_add_new_folder:active ~ .docs_file_icon_inner {
+  color: darkred;
+  box-shadow: none;
+}
+
 .docs_file_select_label {
   width: 80px;
   height: 92px;
@@ -97,11 +102,13 @@ input.docs_file_select_checkbox {
 }
 
 #docs_new_folder_input {
+  position: relative;
   padding: 0;
   text-align: center;
   border: 0;
   height: 18px;
   box-shadow: 0 0 0 1px #DDD;
+  z-index: 10000;
 }
 
 #right_menu {
