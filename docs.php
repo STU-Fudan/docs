@@ -217,10 +217,26 @@ function move_file() {
 function return_posts_list_html_under_dir($dir) {
     $posts_list = get_post_under_dir($dir);
     $output = "<ul>\n";
+    if($dir != "/") {
+        $pdir = substr($dir, 0, strrpos($dir, "/", -2) + 1);
+        if($pdir == "/")
+            $output .= "<li><a class='go_root' href='.'>..</a></li>";
+        else {
+            $args = array(
+                'post_title' => substr($pdir, strrpos($pdir, "/", -2) + 1, -1),
+                'meta_key' => 'dir',
+                'meta_value' => substr($pdir, 0, strrpos($pdir, "/", -2) + 1),
+                'posts_per_page' => 1,
+                'post_type' => array('folder')
+            );
+            $posts = get_posts($args);
+            $output .= "<li><a class='go_parent' href='?p=" . $posts[0]->ID . "'>..</a></li>";
+        }
+    }
     foreach($posts_list as $post) {
         $output .= "<li>";
-        $output .= "<a class='posts_list_" . $post->post_type . "' href='";
-        $output .= $post->guid;
+        $output .= "<a class='posts_list_" . $post->post_type . "' href='?p=";
+        $output .= $post->ID;
         $output .= "'>" . $post->post_title . "</a>";
         $output .= "</li>\n";
     }
@@ -240,7 +256,7 @@ function docs_theme_redirect() {
             include($return_template);
             die();
         } else {
-            $wp_query->is_404 = true;
+            //$wp_query->is_404 = true;
         }
     }
 }
